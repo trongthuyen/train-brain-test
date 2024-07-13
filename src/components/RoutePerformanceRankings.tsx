@@ -13,7 +13,7 @@ interface RoutePerformanceRankingsProps {
 
 const RoutePerformanceRankings = ({ data }: RoutePerformanceRankingsProps) => {
   return (
-    <div className="bg-white w-full rounded-lg p-6 overflow-auto">
+    <div className="bg-white w-full h-full rounded-lg p-6 overflow-auto">
       <div className="flex justify-between">
         {/* TABLE HEADER */}
         <div>
@@ -31,8 +31,8 @@ const RoutePerformanceRankings = ({ data }: RoutePerformanceRankingsProps) => {
       </div>
 
       {/* TABLE */}
-      <div className="w-full mt-2">
-        <table className="w-full">
+      <div className="bg-white w-full h-full min-h-80 relative overflow-auto mt-2">
+        <table className="absolute h-full w-full top-0 left-0 lg:relative min-w-[700px]">
           <thead className="bg-inherit border-t-0">
             <tr>
               <th className="px-0 border-none text-gray-400 font-bold">
