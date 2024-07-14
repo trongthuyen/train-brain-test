@@ -94,7 +94,7 @@ export const FILTER_TIMEFRAME_OPTIONS: Option[] = [
 
 export const FILTER_TRAIN_OPTIONS: Option[] = [
   {
-    label: <strong>All</strong>,
+    label: "All",
     value: -1,
     disabled: false,
   },
@@ -102,7 +102,7 @@ export const FILTER_TRAIN_OPTIONS: Option[] = [
 
 export const FILTER_TOPIC_OPTIONS: Option[] = [
   {
-    label: <strong>All</strong>,
+    label: "All",
     value: -1,
     disabled: false,
   },

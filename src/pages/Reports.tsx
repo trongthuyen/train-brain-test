@@ -11,7 +11,7 @@ import {
 import Card from "../components/Card";
 import RoutePerformanceRankings from "../components/RoutePerformanceRankings";
 import { getActiveRoutes, getMetrics } from "../lib/api";
-import { formatNumberToString } from "../lib/helpers";
+import { formatNumberToString, roundFuelConsumed } from "../lib/helpers";
 
 const Reports = () => {
   const [timeframeSelection, setTimeframeSelection] = useState<Option>(
@@ -28,6 +28,8 @@ const Reports = () => {
   const [metricsData, setMetricsData] = useState<MetricData[]>([]);
   const [filteredMetrics, setFilteredMetrics] = useState<MetricData[]>([]);
 
+  const [loadingMetrics, setLoadingMetrics] = useState(true);
+
   const totalActiveRoutes = useMemo(() => {
     return activeRoutes.reduce((sum, curr) => {
       if (curr.is_active) {
@@ -39,7 +41,7 @@ const Reports = () => {
 
   const totalFuelConsumed = useMemo(() => {
     return filteredMetrics.reduce((sum, curr) => {
-      return sum + curr.fuel_consumption_in_litres;
+      return sum + roundFuelConsumed(curr.fuel_consumption_in_litres);
     }, 0);
   }, [filteredMetrics]);
 
@@ -53,6 +55,11 @@ const Reports = () => {
     return Math.round(total / filteredMetrics.length);
   }, [filteredMetrics]);
 
+  const onChangeTimeframe = (selection: Option) => {
+    setLoadingMetrics(true);
+    setTimeframeSelection(selection);
+  };
+
   const onFilterByTimeframe = () => {
     const result = metricsData.filter((item) => {
       const now = new Date().getTime();
@@ -61,20 +68,32 @@ const Reports = () => {
       return pastTime <= itemTime;
     });
     setFilteredMetrics(result);
+    // setLoadingMetrics(false);
+    setTimeout(() => setLoadingMetrics(false), 1000);
   };
 
   useEffect(() => {
     getActiveRoutes().then((data) => {
       setActiveRoutes(data);
     });
-    getMetrics().then((data) => {
-      setMetricsData(data);
-    });
+    getMetrics()
+      .then((data) => {
+        setMetricsData(data);
+      })
+      .catch(() => {
+        // setLoadingMetrics(false);
+      });
   }, []);
 
   useEffect(() => {
+    // setLoadingMetrics(true);
     onFilterByTimeframe();
   }, [metricsData, timeframeSelection]);
+
+  // to demo loading in 1s
+  useEffect(() => {
+    setTimeout(() => setLoadingMetrics(false), 1000);
+  }, []);
 
   return (
     <div className="h-screen overflow-auto">
@@ -88,7 +107,7 @@ const Reports = () => {
           <FilterPopover
             label="Timeframe"
             selection={timeframeSelection}
-            onSelect={setTimeframeSelection}
+            onSelect={onChangeTimeframe}
             options={FILTER_TIMEFRAME_OPTIONS}
           />
           <FilterPopover
@@ -125,7 +144,10 @@ const Reports = () => {
 
         {/* DATA TABLE */}
         <div className="flex items-center gap-4 flex-1">
-          <RoutePerformanceRankings data={filteredMetrics} />
+          <RoutePerformanceRankings
+            data={filteredMetrics}
+            loading={loadingMetrics}
+          />
         </div>
       </div>
     </div>

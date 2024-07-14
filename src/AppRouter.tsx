@@ -10,7 +10,14 @@ const AppRouter = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="reports" element={<Reports />} />
-          <Route path=":any" element={<div>Not found</div>}></Route>
+          <Route
+            path=":any"
+            element={
+              <div className="w-full h-full flex justify-center items-center text-xl font-semibold">
+                Not found
+              </div>
+            }
+          ></Route>
         </Route>
       </Routes>
     </Router>
